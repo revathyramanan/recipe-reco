@@ -58,13 +58,13 @@ def neo4j_to_d3(results):
                     # Check if the node has been processed already
                     if element_id not in nodes_set:
                         nodes_set.add(element_id)
+                        element_dict= dict(element)
                         result_d3_graphs["nodes"].append({
                             "id": element_id, 
                             "type": list(element.labels)[0],
-                            "name": element.get("name", ""),
-                            "properties": dict(element)  # Convert node properties to a dictionary
+                            "name": element_dict['name'],
+                            "properties": element_dict  # Convert node properties to a dictionary
                         })
-                        print(list(element.labels)[0])
                 # Check if the element is a relationship
                 elif isinstance(element, neo4j.graph.Relationship):
                     start_node_id = str(element.start_node.id)+"_"+str(idx)
