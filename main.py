@@ -61,8 +61,10 @@ def neo4j_to_d3(results):
                         result_d3_graphs["nodes"].append({
                             "id": element_id, 
                             "labels": list(element.labels)[0],
+                            "name": element.get("name", ""),
                             "properties": dict(element)  # Convert node properties to a dictionary
                         })
+                        print(list(element.labels)[0])
                 # Check if the element is a relationship
                 elif isinstance(element, neo4j.graph.Relationship):
                     start_node_id = str(element.start_node.id)+"_"+str(idx)
@@ -100,6 +102,7 @@ for name in names:
     records.append(recs)
 print(records)
 graph = neo4j_to_d3(records)
+# print(graph)
 
-json.dump(graph, open("macroons.json", "w"))
+# json.dump(graph, open("macroons.json", "w"))
     

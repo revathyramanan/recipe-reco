@@ -190,7 +190,8 @@
                 .attr("font-size", 10)
                 .attr("dy", -10)
                 .attr("text-anchor", "middle")
-                .text(d => d.type) // Display node type
+                // .text(d => d.type) // Display node type
+                .text(d => d.name || d.type)
                 .attr("pointer-events", "none"); // Prevent interference with dragging
 
             simulation.on("tick", () => {
