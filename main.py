@@ -85,8 +85,11 @@ def neo4j_to_d3(results):
 
 
 # get the ingredient names
-names = ['Flour, almond', 'Butter, stick, unsalted']
-
+macaron_names = ['Flour, almond', 'Butter, stick, unsalted', 'Sugars, powdered', 'Egg, white, raw, fresh']
+croissant_names = ['Butter, stick, unsalted', 'Flour, wheat, all-purpose, enriched, unbleached', 'Sugars, granulated', 'Salt, table, iodized', 'Milk, whole, 3.25% milkfat, with added vitamin D', ]
+chocolate_name = ['Baking chocolate, unsweetened, squares', 'Butter, stick, unsalted', 'Flour, wheat, all-purpose, enriched, unbleached', 'Sugars, granulated', 'Salt, table, iodized', 'Milk, whole, 3.25% milkfat, with added vitamin D']
+samosa_names = ['Flour, wheat, all-purpose, enriched, unbleached', 'Salt, table, iodized',	'Potatoes, mashed, ready-to-eat', 'Peas, green, raw', 'Oil, mustard', 'Onions, raw','Spices, chili powder', 'Spices, cumin seed', 'Spices, coriander seed', 'Spices, turmeric, ground']
+fruits_names = ['Melons, cantaloupe, raw', 'Melons, honeydew, raw', 'Pineapple, raw', 'Watermelon, raw', 'Grapes, green, seedless, raw']
 # Get those paths from Neo4j
 def get_paths(name):
     query_str = """MATCH (n:Ingredient {name:$name})-[r1]-(d:DiabetesCategory)-[r2]-(des:DiabetesDecision) 
@@ -97,12 +100,12 @@ def get_paths(name):
     return results
 
 records = []
-for name in names:
+for name in fruits_names:
     recs = get_paths(name)
     records.append(recs)
 print(records)
 graph = neo4j_to_d3(records)
 # print(graph)
 
-# json.dump(graph, open("macroons.json", "w"))
+json.dump(graph, open("d3_graph.json", "w"))
     

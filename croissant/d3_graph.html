@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Croissant</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      margin: 20px;
+      font-size: 24px;
+    }
+
+    #graph-container {
+      width: 100vw;
+      height: 85vh;
+      border: 1px solid #ddd;
+      position: relative;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .node {
+      stroke: #fff;
+      stroke-width: 1.5px;
+      cursor: pointer;
+    }
+
+    .link {
+      stroke: #999;
+      stroke-opacity: 0.6;
+    }
+
+    #node-info {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      display: none;
+      width: 250px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    #node-info h3 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 5px;
+    }
+
+    #node-info table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #node-info table td {
+      padding: 5px;
+      border-bottom: 1px solid #ddd;
+      word-break: break-word;
+    }
+
+    #node-info table td:first-child {
+      font-weight: bold;
+      color: #555;
+      width: 40%;
+    }
+
+    #close-info {
+      position: absolute;
+      top: 5px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Croissant</h2>
+
+<div id="graph-container">
+  <svg></svg>
+  <div id="node-info">
+    <button id="close-info" onclick="document.getElementById('node-info').style.display='none'">✖</button>
+    <h3>Node Details</h3>
+    <table id="node-properties"></table>
+  </div>
+</div>
+
+<script>
+  const customColors = {
+    "Ingredient": "#B2DF8A",
+    "DiabetesCategory": "#A6CEE3",
+    "DiabetesDecision": "#E31A1C"
+  };
+
+  const defaultColor = "#4a90e2";
+
+  d3.json("d3_graph.json").then(function (graph) {
+    const svg = d3.select("svg");
+    const width = +svg.node().getBoundingClientRect().width || 800;
+    const height = +svg.node().getBoundingClientRect().height || 600;
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.05, 10])
+      .on("zoom", (event) => {
+        g.attr("transform", event.transform);
+      });
+
+    svg.call(zoom);
+    const g = svg.append("g");
+
+    graph.links.forEach(link => {
+      if (typeof link.source === 'object') link.source = link.source.id;
+      if (typeof link.target === 'object') link.target = link.target.id;
+    });
+
+    const simulation = d3.forceSimulation(graph.nodes)
+      .force("link", d3.forceLink(graph.links).id(d => d.id).distance(40))
+      .force("charge", d3.forceManyBody().strength(-60))
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+    const link = g.append("g")
+      .selectAll("line")
+      .data(graph.links)
+      .enter().append("line")
+      .attr("class", "link")
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
+      .attr("stroke-width", 1)
+      .text(d => d.type || d.relationship || "");
+
+    const node = g.append("g")
+      .selectAll("circle")
+      .data(graph.nodes)
+      .enter().append("circle")
+      .attr("r", 15)
+      .attr("fill", d => customColors[d.labels] || defaultColor) // ✅ use 'labels' not 'type'
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended))
+      .on("click", showNodeCard);
+
+    const floatingText = g.append("g")
+      .selectAll("text")
+      .data(graph.nodes)
+      .enter().append("text")
+      .attr("font-size", 10)
+      .attr("dy", -10)
+      .attr("text-anchor", "middle")
+      .text(d => d.name || d.labels || d.id)
+      .attr("pointer-events", "none");
+
+      simulation.on("tick", () => {
+        link.attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        node.attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+
+        floatingText.attr("x", d => d.x)
+                    .attr("y", d => d.y - 20);
+        });
+
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    function showNodeCard(event, d) {
+      const infoBox = document.getElementById("node-info");
+      const table = document.getElementById("node-properties");
+
+      table.innerHTML = "";
+
+      // Show key top-level fields
+      const topKeys = ["id", "labels", "name"];
+      topKeys.forEach(key => {
+        if (d[key]) {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${key}</td><td>${d[key]}</td>`;
+          table.appendChild(row);
+        }
+      });
+
+      // Unroll properties
+      if (d.properties) {
+        for (const key in d.properties) {
+          const value = d.properties[key];
+          const displayValue = typeof value === 'object' ? JSON.stringify(value) : value;
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${key}</td><td>${displayValue}</td>`;
+          table.appendChild(row);
+        }
+      }
+
+      infoBox.style.display = "block";
+    }
+  }).catch(error => console.error("Error loading JSON:", error));
+</script>
+
+</body>
+</html>
