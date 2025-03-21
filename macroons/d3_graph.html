@@ -227,22 +227,34 @@
                 d.fy = null;
             }
 
-            // Show formatted node info card on click
+           // Show formatted node info card on click
             function showNodeCard(event, d) {
                 const infoBox = document.getElementById("node-info");
                 const table = document.getElementById("node-properties");
 
                 table.innerHTML = "";
-                for (const key in d) {
-                    if (!["x", "y", "vx", "vy", "index", "fx", "fy", "color"].includes(key)) {
+
+                // Show top-level fields (id, type, name)
+                const fieldsToShow = ["id", "type", "name"];
+                fieldsToShow.forEach(key => {
+                    if (d[key]) {
                         const row = document.createElement("tr");
                         row.innerHTML = `<td>${key}</td><td>${d[key]}</td>`;
                         table.appendChild(row);
                     }
+                });
+
+                // Show each property from d.properties
+                if (d.properties) {
+                    for (const key in d.properties) {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `<td>${key}</td><td>${d.properties[key]}</td>`;
+                        table.appendChild(row);
+                    }
                 }
+
                 infoBox.style.display = "block";
             }
-
         }).catch(error => console.error("Error loading JSON:", error));
     </script>
 
