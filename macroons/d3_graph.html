@@ -175,7 +175,7 @@
                 .data(graph.nodes)
                 .enter().append("circle")
                 .attr("r", 15)
-                .attr("fill", d => customColors[d.labels] || defaultColor) // Assign colors based on type
+                .attr("fill", d => customColors[d.type] || defaultColor) // Assign colors based on type
                 .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)

@@ -60,7 +60,7 @@ def neo4j_to_d3(results):
                         nodes_set.add(element_id)
                         result_d3_graphs["nodes"].append({
                             "id": element_id, 
-                            "labels": list(element.labels)[0],
+                            "type": list(element.labels)[0],
                             "name": element.get("name", ""),
                             "properties": dict(element)  # Convert node properties to a dictionary
                         })
