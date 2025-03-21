@@ -147,7 +147,8 @@
       .attr("class", "link")
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", 1);
+      .attr("stroke-width", 1)
+      .text(d => d.type || d.relationship || "");
 
     const node = g.append("g")
       .selectAll("circle")
@@ -171,18 +172,18 @@
       .text(d => d.name || d.labels || d.id)
       .attr("pointer-events", "none");
 
-    simulation.on("tick", () => {
-      link.attr("x1", d => d.source.x)
-          .attr("y1", d => d.source.y)
-          .attr("x2", d => d.target.x)
-          .attr("y2", d => d.target.y);
+      simulation.on("tick", () => {
+        link.attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
 
-      node.attr("cx", d => d.x)
-          .attr("cy", d => d.y);
+        node.attr("cx", d => d.x)
+            .attr("cy", d => d.y);
 
-      floatingText.attr("x", d => d.x)
-                  .attr("y", d => d.y - 20);
-    });
+        floatingText.attr("x", d => d.x)
+                    .attr("y", d => d.y - 20);
+        });
 
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();

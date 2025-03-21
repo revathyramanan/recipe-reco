@@ -70,7 +70,7 @@ def neo4j_to_d3(results):
                     start_node_id = str(element.start_node.id)+"_"+str(idx)
                     end_node_id = str(element.end_node.id)+"_"+str(idx)
                     link_id = (start_node_id, end_node_id, element.type)
-                    
+                    print(element.type)
                     if link_id not in links_set:
                         links_set.add(link_id)
                         result_d3_graphs["links"].append({
