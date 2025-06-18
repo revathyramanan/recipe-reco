@@ -84,7 +84,6 @@
     #node-info table td:first-child {
       font-weight: bold;
       color: #555;
-      width: 40%;
     }
 
     #close-info {
@@ -108,7 +107,12 @@
   <div id="node-info">
     <button id="close-info" onclick="document.getElementById('node-info').style.display='none'">✖</button>
     <h3>Node Details</h3>
-    <table id="node-properties"></table>
+    <table id="node-properties">
+      <colgroup>
+        <col style="width:30%">
+        <col style="width:70%">
+      </colgroup>
+    </table>
   </div>
 </div>
 
@@ -316,7 +320,12 @@
       const infoBox = document.getElementById("node-info");
       const table = document.getElementById("node-properties");
 
-      table.innerHTML = "";
+      table.innerHTML = `
+        <colgroup>
+          <col style="width:30%">
+          <col style="width:70%">
+        </colgroup>
+      `;
 
       // Show key top-level fields
       const topKeys = ["id", "labels", "name"];
