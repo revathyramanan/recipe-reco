@@ -99,7 +99,20 @@
 <h2>Chocolate Croissant</h2>
 
 <div id="graph-container">
-  <svg></svg>
+  <svg>
+    <defs>
+      <marker id="arrow"
+        viewBox="0 -5 10 10" 
+        refX="20" 
+        refY="0" 
+        orient="auto"
+        markerWidth="6"
+        markerHeight="6">
+        <path d="M0,-5L10,0L0,5" fill="#999" />
+      </marker>
+    </defs>
+
+  </svg>
   <div id="node-info">
     <button id="close-info" onclick="document.getElementById('node-info').style.display='none'">✖</button>
     <h3>Node Details</h3>
