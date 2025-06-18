@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Samosas</title>
-  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <title>Chocolate Croissant</title>
+  <script src="https://d3js.org/d3.v6.min.js?v=2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;900&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: 'Barlow', Arial, sans-serif;
     }
 
     h2 {
       margin: 20px;
       font-size: 24px;
+      font-weight: 900; /* Black */
+    }
+
+    p, td, th, #node-info {
+      font-family: 'Barlow', Arial, sans-serif;
+      font-weight: 400; /* Regular */
     }
 
     #graph-container {
@@ -52,7 +54,10 @@
       border-radius: 8px;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
       display: none;
-      width: 250px;
+      min-width: 450px;
+      overflow-x: auto;
+      max-width: 90vw;
+      width: 450px;         /* <-- Increase this value */
       max-height: 400px;
       overflow-y: auto;
     }
@@ -67,7 +72,7 @@
 
     #node-info table {
       width: 100%;
-      border-collapse: collapse;
+      table-layout: fixed;
     }
 
     #node-info table td {
@@ -96,7 +101,7 @@
 </head>
 <body>
 
-<h2>Samosas</h2>
+<h2>Samosa</h2>
 
 <div id="graph-container">
   <svg></svg>
@@ -109,12 +114,43 @@
 
 <script>
   const customColors = {
-    "Ingredient": "#B2DF8A",
-    "DiabetesCategory": "#A6CEE3",
-    "DiabetesDecision": "#E31A1C"
+    "Ingredient": "#005412",
+    "DiabetesCategory": "#FFDB58",
+    "DiabetesDecision": "#C20000"
   };
 
   const defaultColor = "#4a90e2";
+
+  // Show Link Card function - added here before being referenced
+  function showLinkCard(event, d) {
+    const infoBox = document.getElementById("node-info");
+    const table = document.getElementById("node-properties");
+
+    table.innerHTML = "";
+
+    // Show key link details
+    const topKeys = ["type", "allowed","present","explanation","tag"];
+    topKeys.forEach(key => {
+      if (d[key]) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${key}</td><td>${d[key]}</td>`;
+        table.appendChild(row);
+      }
+    });
+
+    // Unroll properties of the link
+    if (d.properties) {
+      for (const key in d.properties) {
+        const value = d.properties[key];
+        const displayValue = typeof value === 'object' ? JSON.stringify(value) : value;
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${key}</td><td>${displayValue}</td>`;
+        table.appendChild(row);
+      }
+    }
+
+    infoBox.style.display = "block";
+  }
 
   d3.json("d3_graph.json").then(function (graph) {
     const svg = d3.select("svg");
@@ -135,10 +171,30 @@
       if (typeof link.target === 'object') link.target = link.target.id;
     });
 
+    // Define marker for directed edges (arrows)
+    svg.append("defs").append("marker")
+      .attr("id", "arrow")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 12)  // Position of the arrowhead
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "#999");
+
     const simulation = d3.forceSimulation(graph.nodes)
-      .force("link", d3.forceLink(graph.links).id(d => d.id).distance(40))
-      .force("charge", d3.forceManyBody().strength(-60))
-      .force("center", d3.forceCenter(width / 2, height / 2));
+      .force("link", d3.forceLink(graph.links).id(d => d.id).distance(100))
+      .force("charge", d3.forceManyBody().strength(-20))
+      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05))
+      .force("collide", d3.forceCollide(50))  // Adjust collision force
+      // .alphaTarget(0.3)  // Set target alpha (higher means less force)
+      .alphaDecay(0.05)  // Slower decay allows the nodes to settle more
+      .alphaMin(0.001) 
+      .on("tick", ticked);
+
+    // simulation.restart();
 
     const link = g.append("g")
       .selectAll("line")
@@ -148,19 +204,69 @@
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 1)
-      .text(d => d.type || d.relationship || "");
-
+      .attr("marker-end", "url(#arrow)")  // Add arrowhead at the end of each link
+      .on("click", showLinkCard);  // Add this for interaction
+    
     const node = g.append("g")
       .selectAll("circle")
       .data(graph.nodes)
       .enter().append("circle")
       .attr("r", 15)
-      .attr("fill", d => customColors[d.labels] || defaultColor) // ✅ use 'labels' not 'type'
+      .attr("fill", d => customColors[d.type] || defaultColor)
       .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended))
-      .on("click", showNodeCard);
+      .on("click", showNodeCard)
+      .on("dblclick", function(event, d) {
+        d.fx = null;
+        d.fy = null;
+      });
+
+
+  
+    // ...existing code...
+    const linkLabels = g.append("g")
+      .selectAll("text")
+      .data(graph.links)
+      .enter().append("text")
+      .attr("font-size", 10)
+      .attr("fill", "#555")
+      .attr("text-anchor", "middle")
+      .text(d => d.type || "")  // Display the 'type' property of the link
+      .attr("dy", -5)           // Position the label slightly above the link
+      .style("cursor", "pointer") // Make it look clickable
+      .on("click", showLinkCard); // <-- Add this line
+
+    // Update link labels' positions on every tick
+    simulation.on("tick", () => {
+      link.attr("x1", d => d.source.x)
+          .attr("y1", d => d.source.y)
+          .attr("x2", d => d.target.x)
+          .attr("y2", d => d.target.y);
+
+      // Update the positions of the link labels
+      linkLabels
+        .attr("x", d => (d.source.x + d.target.x) / 2)  // Position text at the midpoint
+        .attr("y", d => (d.source.y + d.target.y) / 2); // Position text at the midpoint
+    });
+
+    function ticked() {
+      link.attr("x1", d => d.source.x)
+          .attr("y1", d => d.source.y)
+          .attr("x2", d => d.target.x)
+          .attr("y2", d => d.target.y);
+
+      node.attr("cx", d => d.x)
+          .attr("cy", d => d.y);
+
+      floatingText.attr("x", d => d.x)
+                  .attr("y", d => d.y - 20);
+
+      linkLabels
+          .attr("x", d => (d.source.x + d.target.x) / 2)
+          .attr("y", d => (d.source.y + d.target.y) / 2);
+    }
 
     const floatingText = g.append("g")
       .selectAll("text")
@@ -183,6 +289,10 @@
 
         floatingText.attr("x", d => d.x)
                     .attr("y", d => d.y - 20);
+        linkLabels
+            .attr("x", d => (d.source.x + d.target.x) / 2)
+            .attr("y", d => (d.source.y + d.target.y) / 2);
+
         });
 
     function dragstarted(event, d) {
@@ -198,8 +308,8 @@
 
     function dragended(event, d) {
       if (!event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
+      d.fx = d.x;
+      d.fy = d.y;
     }
 
     function showNodeCard(event, d) {
