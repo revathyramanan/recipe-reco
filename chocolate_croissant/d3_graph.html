@@ -270,22 +270,19 @@
 
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
-      // Fix the node at its current position
       d.fx = d.x;
       d.fy = d.y;
     }
 
     function dragged(event, d) {
-      // Update the position while dragging
       d.fx = event.x;
       d.fy = event.y;
     }
 
     function dragended(event, d) {
       if (!event.active) simulation.alphaTarget(0);
-      // Leave the node fixed at the dragged position
-      d.fx = event.x;
-      d.fy = event.y;
+      d.fx = null;
+      d.fy = null;
     }
 
     function showNodeCard(event, d) {
