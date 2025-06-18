@@ -142,10 +142,9 @@
       .force("collide", d3.forceCollide(50))  // Adjust collision force
       .alphaTarget(0.3)  // Set target alpha (higher means less force)
       .alphaDecay(0.05)  // Slower decay allows the nodes to settle more
-      .on("tick", ticked);
+      .on("tick", ticked);  // Only one ticked handler
 
     simulation.restart();
-
 
     const link = g.append("g")
       .selectAll("line")
@@ -156,7 +155,7 @@
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 1)
       .on("click", showLinkCard);  // 👈 Add this for interaction
-        
+
     const linkLabels = g.append("g")
       .selectAll("text")
       .data(graph.links)
@@ -166,40 +165,6 @@
       .attr("text-anchor", "middle")
       .text(d => d.type || "")  // Display the 'type' property of the link
       .attr("dy", -5);  // Position the label slightly above the link
-
-    // Update link labels' positions on every tick
-    simulation.on("tick", () => {
-      link.attr("x1", d => d.source.x)
-          .attr("y1", d => d.source.y)
-          .attr("x2", d => d.target.x)
-          .attr("y2", d => d.target.y);
-
-      // Update the positions of the link labels
-      linkLabels
-        .attr("x", d => (d.source.x + d.target.x) / 2)  // Position text at the midpoint
-        .attr("y", d => (d.source.y + d.target.y) / 2); // Position text at the midpoint
-    });
-
-    function ticked() {
-      link.attr("x1", d => d.source.x)
-          .attr("y1", d => d.source.y)
-          .attr("x2", d => d.target.x)
-          .attr("y2", d => d.target.y);
-
-      node.attr("cx", d => d.x)
-          .attr("cy", d => d.y);
-
-      floatingText.attr("x", d => d.x)
-                  .attr("y", d => d.y - 20);
-
-      linkLabels
-          .attr("x", d => (d.source.x + d.target.x) / 2)
-          .attr("y", d => (d.source.y + d.target.y) / 2);
-    }
-
-
-
-
 
     const node = g.append("g")
       .selectAll("circle")
@@ -223,22 +188,23 @@
       .text(d => d.name || d.labels || d.id)
       .attr("pointer-events", "none");
 
-      simulation.on("tick", () => {
-        link.attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y);
+    // Consolidated ticked function
+    function ticked() {
+      link.attr("x1", d => d.source.x)
+          .attr("y1", d => d.source.y)
+          .attr("x2", d => d.target.x)
+          .attr("y2", d => d.target.y);
 
-        node.attr("cx", d => d.x)
-            .attr("cy", d => d.y);
+      node.attr("cx", d => d.x)
+          .attr("cy", d => d.y);
 
-        floatingText.attr("x", d => d.x)
-                    .attr("y", d => d.y - 20);
-        linkLabels
-            .attr("x", d => (d.source.x + d.target.x) / 2)
-            .attr("y", d => (d.source.y + d.target.y) / 2);
+      floatingText.attr("x", d => d.x)
+                  .attr("y", d => d.y - 20);
 
-        });
+      linkLabels
+          .attr("x", d => (d.source.x + d.target.x) / 2)
+          .attr("y", d => (d.source.y + d.target.y) / 2);
+    }
 
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -287,6 +253,7 @@
       infoBox.style.display = "block";
     }
   }).catch(error => console.error("Error loading JSON:", error));
+
 </script>
 
 </body>
