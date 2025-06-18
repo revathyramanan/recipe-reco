@@ -154,6 +154,7 @@
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 1)
+      .text(d => d.type || d.relationship || "")
       .on("click", showLinkCard);
 
     const linkLabels = g.append("g")
