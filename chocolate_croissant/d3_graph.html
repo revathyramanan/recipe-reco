@@ -139,7 +139,12 @@
       .force("link", d3.forceLink(graph.links).id(d => d.id).distance(80))
       .force("charge", d3.forceManyBody().strength(-30))
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.05))
-      .force("collide", d3.forceCollide(30));  // Adjust the radius to control subgraph spacing
+      .force("collide", d3.forceCollide(30))  // Adjust collision force
+      .alphaTarget(0.3)  // Set target alpha (higher means less force)
+      .alphaDecay(0.05)  // Slower decay allows the nodes to settle more
+      .on("tick", ticked);
+
+    simulation.restart();
 
 
     const link = g.append("g")
