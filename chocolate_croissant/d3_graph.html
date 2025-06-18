@@ -148,14 +148,14 @@
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 1)
-      .text(d => d.type || d.relationship || "");
+      .on("click", showLinkCard);  // Add this for showing link details
 
     const node = g.append("g")
       .selectAll("circle")
       .data(graph.nodes)
       .enter().append("circle")
       .attr("r", 15)
-      .attr("fill", d => customColors[d.labels] || defaultColor) // ✅ use 'labels' not 'type'
+      .attr("fill", d => customColors[d.labels] || defaultColor)
       .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -202,13 +202,13 @@
       d.fy = null;
     }
 
+    // Show node details
     function showNodeCard(event, d) {
       const infoBox = document.getElementById("node-info");
       const table = document.getElementById("node-properties");
 
       table.innerHTML = "";
 
-      // Show key top-level fields
       const topKeys = ["id", "labels", "name"];
       topKeys.forEach(key => {
         if (d[key]) {
@@ -218,7 +218,37 @@
         }
       });
 
-      // Unroll properties
+      if (d.properties) {
+        for (const key in d.properties) {
+          const value = d.properties[key];
+          const displayValue = typeof value === 'object' ? JSON.stringify(value) : value;
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${key}</td><td>${displayValue}</td>`;
+          table.appendChild(row);
+        }
+      }
+
+      infoBox.style.display = "block";
+    }
+
+    // Show link details
+    function showLinkCard(event, d) {
+      const infoBox = document.getElementById("node-info");
+      const table = document.getElementById("node-properties");
+
+      table.innerHTML = "";
+
+      // Show key link details
+      const topKeys = ["source", "target", "type"];
+      topKeys.forEach(key => {
+        if (d[key]) {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${key}</td><td>${d[key]}</td>`;
+          table.appendChild(row);
+        }
+      });
+
+      // Unroll properties of the link
       if (d.properties) {
         for (const key in d.properties) {
           const value = d.properties[key];
