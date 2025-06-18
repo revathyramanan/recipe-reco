@@ -212,7 +212,11 @@
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended))
-      .on("click", showNodeCard);
+      .on("click", showNodeCard)
+      .on("dblclick", function(event, d) {
+        d.fx = null;
+        d.fy = null;
+      });
 
 
   
