@@ -201,7 +201,21 @@
       .attr("stroke-width", 1)
       .attr("marker-end", "url(#arrow)")  // Add arrowhead at the end of each link
       .on("click", showLinkCard);  // Add this for interaction
-        
+    
+    const node = g.append("g")
+      .selectAll("circle")
+      .data(graph.nodes)
+      .enter().append("circle")
+      .attr("r", 15)
+      .attr("fill", d => customColors[d.type] || defaultColor)
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended))
+      .on("click", showNodeCard);
+
+
+  
     // ...existing code...
     const linkLabels = g.append("g")
       .selectAll("text")
@@ -244,18 +258,6 @@
           .attr("x", d => (d.source.x + d.target.x) / 2)
           .attr("y", d => (d.source.y + d.target.y) / 2);
     }
-
-    const node = g.append("g")
-      .selectAll("circle")
-      .data(graph.nodes)
-      .enter().append("circle")
-      .attr("r", 15)
-      .attr("fill", d => customColors[d.type] || defaultColor)
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended))
-      .on("click", showNodeCard);
 
     const floatingText = g.append("g")
       .selectAll("text")
