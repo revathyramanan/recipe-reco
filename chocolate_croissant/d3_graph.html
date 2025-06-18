@@ -202,6 +202,7 @@
       .attr("marker-end", "url(#arrow)")  // Add arrowhead at the end of each link
       .on("click", showLinkCard);  // Add this for interaction
         
+    // ...existing code...
     const linkLabels = g.append("g")
       .selectAll("text")
       .data(graph.links)
@@ -210,7 +211,9 @@
       .attr("fill", "#555")
       .attr("text-anchor", "middle")
       .text(d => d.type || "")  // Display the 'type' property of the link
-      .attr("dy", -5);  // Position the label slightly above the link
+      .attr("dy", -5)           // Position the label slightly above the link
+      .style("cursor", "pointer") // Make it look clickable
+      .on("click", showLinkCard); // <-- Add this line
 
     // Update link labels' positions on every tick
     simulation.on("tick", () => {
