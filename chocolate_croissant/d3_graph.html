@@ -173,6 +173,7 @@
       .force("collide", d3.forceCollide(50))  // Adjust collision force
       .alphaTarget(0.3)  // Set target alpha (higher means less force)
       .alphaDecay(0.05)  // Slower decay allows the nodes to settle more
+      .alphaMin(0.001) 
       .on("tick", ticked);
 
     simulation.restart();
