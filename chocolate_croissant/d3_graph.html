@@ -162,6 +162,7 @@
       .enter().append("text")
       .attr("class", "link-label")
       .attr("text-anchor", "middle")
+      .attr("fill", "#555")
       .text(d => d.type || d.relationship || "");
 
     const node = g.append("g")
