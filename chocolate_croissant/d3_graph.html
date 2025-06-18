@@ -166,6 +166,19 @@
       if (typeof link.target === 'object') link.target = link.target.id;
     });
 
+    // Define marker for directed edges (arrows)
+    svg.append("defs").append("marker")
+      .attr("id", "arrow")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 20)  // Position of the arrowhead
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "#999");
+
     const simulation = d3.forceSimulation(graph.nodes)
       .force("link", d3.forceLink(graph.links).id(d => d.id).distance(100))
       .force("charge", d3.forceManyBody().strength(-30))
@@ -178,7 +191,6 @@
 
     simulation.restart();
 
-
     const link = g.append("g")
       .selectAll("line")
       .data(graph.links)
@@ -187,6 +199,7 @@
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 1)
+      .attr("marker-end", "url(#arrow)")  // Add arrowhead at the end of each link
       .on("click", showLinkCard);  // Add this for interaction
         
     const linkLabels = g.append("g")
