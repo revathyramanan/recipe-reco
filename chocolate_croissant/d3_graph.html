@@ -155,7 +155,7 @@
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 1)
-      .on("click", showLinkCard);  // 👈 Add this for interaction
+      .on("click", showLinkCard);  // Add this for interaction
         
     const linkLabels = g.append("g")
       .selectAll("text")
@@ -274,6 +274,37 @@
       });
 
       // Unroll properties
+      if (d.properties) {
+        for (const key in d.properties) {
+          const value = d.properties[key];
+          const displayValue = typeof value === 'object' ? JSON.stringify(value) : value;
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${key}</td><td>${displayValue}</td>`;
+          table.appendChild(row);
+        }
+      }
+
+      infoBox.style.display = "block";
+    }
+
+    // Show link details
+    function showLinkCard(event, d) {
+      const infoBox = document.getElementById("node-info");
+      const table = document.getElementById("node-properties");
+
+      table.innerHTML = "";
+
+      // Show key link details
+      const topKeys = ["source", "target", "type"];
+      topKeys.forEach(key => {
+        if (d[key]) {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${key}</td><td>${d[key]}</td>`;
+          table.appendChild(row);
+        }
+      });
+
+      // Unroll properties of the link
       if (d.properties) {
         for (const key in d.properties) {
           const value = d.properties[key];
