@@ -299,8 +299,8 @@
 
     function dragended(event, d) {
       if (!event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
+      d.fx = d.x;
+      d.fy = d.y;
     }
 
     function showNodeCard(event, d) {
