@@ -1,0 +1,201 @@
+node {
+  diameter: 50px;
+  color: #A5ABB6;
+  border-color: #9AA1AC;
+  border-width: 2px;
+  text-color-internal: #FFFFFF;
+  font-size: 10px;
+  font-family: "Consolas";
+}
+relationship {
+  color: #A5ABB6;
+  shaft-width: 0.7px;
+  font-size: 9px;
+  padding: 3px;
+  text-color-external: #000000;
+  text-color-internal: #FFFFFF;
+  caption: "<type>";
+  font-family: "Barlow";
+  arrow-size: 0.5;
+}
+node.* {
+  color: #C990C0;
+  border-color: #b261a5;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+}
+node.Food {
+  color: #F79767;
+  border-color: #f36924;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.GlycemicIndex {
+  color: #57C7E3;
+  border-color: #23b3d7;
+  text-color-internal: #2A2C34;
+  defaultCaption: "<id>";
+  caption: "{value}";
+}
+node.ProductCategory {
+  color: #F16667;
+  border-color: #eb2728;
+  text-color-internal: #FFFFFF;
+  caption: "{name}";
+}
+node.FoodManufacturer {
+  color: #D9C8AE;
+  border-color: #c0a378;
+  text-color-internal: #2A2C34;
+  caption: "{name}";
+}
+node.GlycemicLoad {
+  color: #8DCC93;
+  border-color: #5db665;
+  text-color-internal: #2A2C34;
+  caption: "{value}";
+}
+node.Task {
+  color: #ECB5C9;
+  border-color: #da7298;
+  text-color-internal: #2A2C34;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Pipeline {
+  color: #4C8EDA;
+  border-color: #2870c2;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Stage {
+  color: #FFC454;
+  border-color: #d7a013;
+  text-color-internal: #2A2C34;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Execution {
+  color: #DA7194;
+  border-color: #cc3c6c;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Artifact {
+  color: #569480;
+  border-color: #447666;
+  text-color-internal: #FFFFFF;
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Report {
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Framework {
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Model {
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.Dataset {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #57C7E3;
+  border-color: #23b3d7;
+  text-color-internal: #2A2C34;
+}
+node.Metric {
+  defaultCaption: "<id>";
+  caption: "{result}";
+}
+node.TaskArea {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #F16667;
+  border-color: #eb2728;
+  text-color-internal: #FFFFFF;
+}
+node.TaskSubArea {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #569480;
+  border-color: #447666;
+  text-color-internal: #FFFFFF;
+}
+node.Ingredient {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #005412;
+  border-color: #005412;
+  text-color-internal: #FFFFFF;
+}
+node.DiabetesDecision {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #C20000;
+  border-color: #C20000;
+  text-color-internal: #FFFFFF;
+}
+node.DiabetesCategory {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #FFDB58;
+  border-color: #FFDB58;
+  text-color-internal: #000000
+}
+node.Carcinogen {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #520675;
+  border-color: #520675;
+  text-color-internal: #FFFFFF;
+}
+node.CookingMethod {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #B5D900;
+  border-color: #B5D900;
+  text-color-internal: #000000
+}
+node.CookingMethodCategory {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #2846D1;
+  border-color: #2846D1;
+  text-color-internal: #FFFFFF;
+}
+node.Contains {
+  defaultCaption: "<id>";
+  caption: "{name}";
+}
+node.SmokePointCategory {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #FFA203;
+  border-color: #FFA203;
+  text-color-internal: #000000;
+  diameter: 50px;
+}
+node.GIIngredient {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #FFFFFF;
+  border-color: #000000;
+  border-width: 0.5px;
+  text-color-internal: #000000;
+  diameter: 50px;
+}
+node.GICategory {
+  defaultCaption: "<id>";
+  caption: "{name}";
+  color: #CCCCCC;
+  border-color: #CCCCCC;
+  text-color-internal: #000000;
+  diameter: 50px;
+}
